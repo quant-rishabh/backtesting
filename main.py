@@ -20,6 +20,11 @@ logger.addHandler(stream_handler)
 # logger.info("this a info log")
 
 
+# only this file run then only run otherwise if imported in other then dont run
+
+if __name__ == "__main__":
+    mode = input("choose  the program mode (data/ backtest / optimize)").lower()
+    
 
 
 
