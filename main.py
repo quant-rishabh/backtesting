@@ -1,5 +1,5 @@
 import logging
-
+from exchange.binance import BinanceClient
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -24,7 +24,8 @@ logger.addHandler(stream_handler)
 
 if __name__ == "__main__":
     mode = input("choose  the program mode (data/ backtest / optimize)").lower()
-    
+    client = BinanceClient()
+    print(client.get_historical_data("BTCUSDT"))
 
 
 
