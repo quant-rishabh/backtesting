@@ -3,7 +3,7 @@ from typing import *
 
 import logging
 logger = logging.getLogger()
-class BinanceClient:
+class FtxClient:
     def __init__(self, futures = False):
         self._base_url = "https://api.binance.com"
         self.futures = futures
