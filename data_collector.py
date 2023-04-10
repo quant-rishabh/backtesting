@@ -27,7 +27,7 @@ def collect_all(client, exchange, symbol ):
         oldest_ts = data[0][0]
         most_recent_ts = data[-1][0]
 
-
+        h5_db.write_data(symbol,data)
     # most recent data
     while True:
 
