@@ -2,11 +2,15 @@ from exchange.binance import BinanceClient
 import logging
 import time
 from utils import *
+from database import *
 logger = logging.getLogger()
 
 
 # data old->> new
 def collect_all(client, exchange, symbol ):
+
+    h5_db = Hdf5Client(exchange)
+    h5_db.create_dataset(symbol)
     oldest_ts, most_recent_ts = None, None
 
     #initial request
