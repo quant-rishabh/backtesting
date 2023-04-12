@@ -11,6 +11,9 @@ def collect_all(client, exchange, symbol):
 
     h5_db = Hdf5Client(exchange)
     h5_db.create_dataset(symbol)
+
+    print(h5_db.get_data(symbol,from_time=0, to_time=int(time.time()*1000)))
+    return
     oldest_ts, most_recent_ts = h5_db.get_first_last_timestamp(symbol)
     #initial request
 
@@ -37,6 +40,12 @@ def collect_all(client, exchange, symbol):
 
         data = data[:-1]
 
+        data_to_insert = data_to_insert + data
+
+        if len(data_to_insert) > 10000:
+            h5_db.write_data(symbol, data_to_insert)
+            data_to_insert.clear()
+
         if len(data) <2 :
             break
 
@@ -46,11 +55,12 @@ def collect_all(client, exchange, symbol):
         logger.info("%s %s :  Collected %s recent data from %s to %s", exchange, symbol, len(data),
                     ms_to_dt(data[0][0]), ms_to_dt(data[-1][0]))
 
-        h5_db.write_data(symbol, data)
-
         time.sleep(1.1)
 
-        #older data
+    h5_db.write_data(symbol, data_to_insert)
+    data_to_insert.clear()
+
+    #older data
     while True:
 
         data = client.get_historical_data(symbol,end_time=int(oldest_ts) - 60000)
@@ -63,12 +73,19 @@ def collect_all(client, exchange, symbol):
                         ms_to_dt(oldest_ts))
             break
 
+        data_to_insert = data_to_insert + data
+
+        if len(data_to_insert) > 10000:
+            h5_db.write_data(symbol, data_to_insert)
+            data_to_insert.clear()
+
         if data[0][0] < oldest_ts:
             oldest_ts = data[0][0]
 
         logger.info("%s %s :  Collected %s older data from %s to %s", exchange, symbol, len(data),
                     ms_to_dt(data[0][0]), ms_to_dt(data[-1][0]))
 
-        h5_db.write_data(symbol, data)
-
         time.sleep(1.1)
+
+    h5_db.write_data(symbol, data_to_insert)
+    data_to_insert.clear()
