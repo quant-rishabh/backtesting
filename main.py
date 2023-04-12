@@ -26,7 +26,7 @@ if __name__ == "__main__":
     mode = input("choose  the program mode (data/ backtest / optimize) : ").lower()
     client = BinanceClient()
     while True:
-        exchange = input("Choose a exchange :")
+        exchange = input("Choose a exchange : ")
         if exchange == "binance":
             break
 

@@ -7,12 +7,11 @@ logger = logging.getLogger()
 
 
 # data old->> new
-def collect_all(client, exchange, symbol ):
+def collect_all(client, exchange, symbol):
 
     h5_db = Hdf5Client(exchange)
     h5_db.create_dataset(symbol)
-    oldest_ts, most_recent_ts = None, None
-
+    oldest_ts, most_recent_ts = h5_db.get_first_last_timestamp(symbol)
     #initial request
 
     if oldest_ts is None:
@@ -28,7 +27,7 @@ def collect_all(client, exchange, symbol ):
         most_recent_ts = data[-1][0]
 
         h5_db.write_data(symbol,data)
-    # most recent data
+    #
     while True:
 
         data = client.get_historical_data(symbol,start_time=int(most_recent_ts) + 60000)
@@ -46,6 +45,8 @@ def collect_all(client, exchange, symbol ):
 
         logger.info("%s %s :  Collected %s recent data from %s to %s", exchange, symbol, len(data),
                     ms_to_dt(data[0][0]), ms_to_dt(data[-1][0]))
+
+        h5_db.write_data(symbol, data)
 
         time.sleep(1.1)
 
@@ -67,5 +68,7 @@ def collect_all(client, exchange, symbol ):
 
         logger.info("%s %s :  Collected %s older data from %s to %s", exchange, symbol, len(data),
                     ms_to_dt(data[0][0]), ms_to_dt(data[-1][0]))
+
+        h5_db.write_data(symbol, data)
 
         time.sleep(1.1)
