@@ -12,7 +12,10 @@ def collect_all(client, exchange, symbol):
     h5_db = Hdf5Client(exchange)
     h5_db.create_dataset(symbol)
 
-    print(h5_db.get_data(symbol,from_time=0, to_time=int(time.time()*1000)))
+    data = h5_db.get_data(symbol,from_time=0, to_time=int(time.time()*1000))
+
+    data = resample_timeframe(data,"15m")
+    print(data)
     return
     oldest_ts, most_recent_ts = h5_db.get_first_last_timestamp(symbol)
     #initial request
