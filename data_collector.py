@@ -1,3 +1,5 @@
+import pandas as pd
+
 from exchange.binance import BinanceClient
 import logging
 import time
@@ -14,12 +16,12 @@ def collect_all(client, exchange, symbol):
 
     data = h5_db.get_data(symbol,from_time=0, to_time=int(time.time()*1000))
 
-    data = resample_timeframe(data,"15m")
-    print(data)
-    return
+    # data = resample_timeframe(data,"15m")
+    # print(data)
+    # return
     oldest_ts, most_recent_ts = h5_db.get_first_last_timestamp(symbol)
     #initial request
-
+    data_to_insert = []
     if oldest_ts is None:
         data = client.get_historical_data(symbol, end_time=int(time.time() *1000 )-60000)
         if len(data) == 0:
@@ -31,6 +33,8 @@ def collect_all(client, exchange, symbol):
 
         oldest_ts = data[0][0]
         most_recent_ts = data[-1][0]
+
+
 
         h5_db.write_data(symbol,data)
     #

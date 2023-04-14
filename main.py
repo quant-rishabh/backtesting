@@ -1,6 +1,9 @@
 import logging
 from exchange.binance import BinanceClient
 from data_collector import collect_all
+import backtester
+import datetime
+from utils import TF_EQUIV
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -38,5 +41,52 @@ if __name__ == "__main__":
 
     if mode == "data":
         collect_all(client, exchange, symbol)
+
+
+    elif mode == "backtest":
+
+        #strategy testing
+
+
+        available_strategies =['obv']
+        while True:
+            strategy = input(f"Chose a strategy: ({', '.join(available_strategies)}) : ").lower()
+
+            if strategy in available_strategies:
+                break
+        #timeframe
+        while True:
+            tf = input(f"Chose a timeframe: ({', '.join(TF_EQUIV.keys())}): ").lower()
+
+            if tf in TF_EQUIV.keys():
+                break
+         #from_time
+        while True:
+            from_time = input("backtest from (yyyy-mm-dd or Press Enter): ")
+
+            if from_time == "":
+                from_time = 0
+                break
+            try:
+                from_time = int(datetime.datetime.strptime(from_time,"%y-%m-%d").timestamp()*1000)
+                break
+            except ValueError:
+                continue
+
+        # to Time
+        while True:
+            to_time = input("backtest to (yyyy-mm-dd or Press Enter) : ")
+
+            if to_time == "":
+                to_time = int(datetime.datetime.now().timestamp()*1000)
+                break
+            try:
+                to_time = int(datetime.datetime.strptime(to_time, "%y-%m-%d").timestamp() * 1000)
+                break
+            except ValueError:
+                continue
+
+
+        backtester.run(exchange,symbol,strategy, tf, from_time,to_time)
 
 
