@@ -25,6 +25,15 @@ logger.addHandler(stream_handler)
 
 # only this file run then only run otherwise if imported in other then dont run
 
+
+#1. asking from what you want to perfrom ( add data of 1 min, and later can change to any other form, or backtest, optimize)
+
+#2 . asking for which client you want to fetch data from
+
+#3. What currency pair your want to pull
+
+#4 if backtest choose strategy, like 1.moving average 2. vwap startegy , timeframe (Reseampled timeframe using numpy library)
+
 if __name__ == "__main__":
     mode = input("choose  the program mode (data/ backtest / optimize) : ").lower()
     client = BinanceClient()
@@ -48,7 +57,7 @@ if __name__ == "__main__":
         #strategy testing
 
 
-        available_strategies =['obv']
+        available_strategies =['obv', 'ichimoku']
         while True:
             strategy = input(f"Chose a strategy: ({', '.join(available_strategies)}) : ").lower()
 
